@@ -3,7 +3,6 @@ import numpy as np
 import math, copy
 import re
 from surprise import Reader, Dataset, SVD, evaluate
-from scipy.sparse.linalg import svds
 import operator
 
 # path to where the input file is present
