@@ -6,16 +6,18 @@ from surprise import Reader, Dataset, SVD, evaluate
 from scipy.sparse.linalg import svds
 import operator
 
-path = '/Users/bhavesh/Downloads/download/'
+# path to where the input file is present
+path = './'
 
+# Reference: https://www.kaggle.com/laowingkin/netflix-movie-recommendation
 df = pd.read_csv(path + 'NewMergedFile.txt', header = None, names = ['Cust_Id', 'Rating', 'Movie_Id'], usecols = [0,1,3])
 df['Rating'] = df['Rating'].astype(float)
 df['Movie_Id'] = df['Movie_Id'].astype(int)
 df['Cust_Id'] = df['Cust_Id'].astype(int)
 
-print('Dataset 1 shape: {}'.format(df.shape))
-print('-Dataset examples-')
-print(df.iloc[::5000000, :])
+# print('Dataset 1 shape: {}'.format(df.shape))
+# print('-Dataset examples-')
+# print(df.iloc[::5000000, :])
 
 
 # DATA CLEANING
@@ -32,22 +34,22 @@ df_movie_summary.index = df_movie_summary.index.map(int)
 movie_benchmark = round(df_movie_summary['count'].quantile(0.2),0)
 drop_movie_list = df_movie_summary[df_movie_summary['count'] < movie_benchmark].index
 
-print('Movie minimum times of review: {}'.format(movie_benchmark))
+# print('Movie minimum times of review: {}'.format(movie_benchmark))
 
 df_cust_summary = df.groupby('Cust_Id')['Rating'].agg(f)
 df_cust_summary.index = df_cust_summary.index.map(int)
 cust_benchmark = round(df_cust_summary['count'].quantile(0.2),0)
 drop_cust_list = df_cust_summary[df_cust_summary['count'] < cust_benchmark].index
 
-print('Customer minimum times of review: {}'.format(cust_benchmark))
+# print('Customer minimum times of review: {}'.format(cust_benchmark))
 
 # Removing Data
-print('Original Shape: {}'.format(df.shape))
+# print('Original Shape: {}'.format(df.shape))
 df = df[~df['Movie_Id'].isin(drop_movie_list)]
 df = df[~df['Cust_Id'].isin(drop_cust_list)]
-print('After Trim Shape: {}'.format(df.shape))
-print('-Data Examples-')
-print(df.iloc[::5000000, :])
+# print('After Trim Shape: {}'.format(df.shape))
+# print('-Data Examples-')
+# print(df.iloc[::5000000, :])
 
 df_p = pd.pivot_table(df,values='Rating',index='Cust_Id',columns='Movie_Id')
 
@@ -58,8 +60,6 @@ df_title.set_index('Movie_Id', inplace = True)
 
 # Reference: https://github.com/vdyashin/SVD/blob/master/function.py
 def SVD(mat, initial_mat1, initial_mat2, learn_rate, iterations):
-    ## reassigning values in order to keep code clean
-    # the m by n matrix that we want to approximate
     A = np.array(mat)
     # two matrices from which we will start: B is m by k
     B = np.array(initial_mat1)
@@ -84,7 +84,6 @@ def SVD(mat, initial_mat1, initial_mat2, learn_rate, iterations):
         B = B - alpha * dLdB
         # calculating approximated matrix
         A_app = np.dot(B, C.T)
-    # returning two matrices that can be used for A approximation
     return B, C, A_app
 
 
@@ -149,11 +148,11 @@ def test(movieUserMatrix, movieCount, custIdCount):
                     # print originalMatrix[x][y], newMovieUserMatrix[x][y]
                     rmse += ((originalMatrix[x][y] - newMovieUserMatrix[x][y]) * (originalMatrix[x][y] - newMovieUserMatrix[x][y]))
                     count +=1
-    print "rmse: ", rmse, "count: ", count
+    # print "rmse: ", rmse, "count: ", count
     if count != 0:
         print "rmse: ", math.sqrt(rmse/count)
 
-def convertToMatrix(df, movie_title, printFlag = True):
+def knn_recommend(df, movie_title, printFlag = True):
     movieIds = {}
     custIds = {}
     movieCount = 0
@@ -237,8 +236,7 @@ def checkRecommendationAccuracy(movieRecco, df, movie, algo = 'KNN'):
     for index, row in movieRecco.iterrows():
         # print row['Name']
         if algo == 'KNN':
-
-            recco = convertToMatrix(df, row['Name'], False)
+            recco = knn_recommend(df, row['Name'], False)
         else:
             recco = recommend(row['Name'], 0, False)
         for i, inner_row in recco.iterrows():
@@ -253,7 +251,7 @@ import sys
 movie = "Justice League"
 if len(sys.argv) > 1:
     movie = sys.argv[1]
-recco = convertToMatrix(df, movie)
+recco = knn_recommend(df, movie)
 checkRecommendationAccuracy(recco, df, movie, 'KNN')
 recco = recommend(movie, 0)
 checkRecommendationAccuracy(recco, df, movie, 'PC')

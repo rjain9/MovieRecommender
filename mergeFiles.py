@@ -5,14 +5,14 @@ from os.path import isfile, join
 mypath = './training_set/'
 onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
 
-mergedFile = 'NewMergedFile.txt'
+mergedFile = 'MergedFile.txt'
 c = 0
 # print onlyfiles
 for f in onlyfiles:
     c += 1
-    if c % 100 == 0:
+    if c % 1000 == 0:
         print c
-        break
+        # break
     with open(mypath + f) as f:
         lines = f.readlines()
         movieId = lines[0].split(':')[0]
