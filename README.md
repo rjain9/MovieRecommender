@@ -10,7 +10,8 @@ To run the project, following command can be used:
 python aldaProjectMain.py "Justice League"
 
 Sample Output:
-'''
+
+```
 For movie (Justice League)
 - Top 10 movies recommended based on KNN - 
             Year                            Name
@@ -39,6 +40,5 @@ PearsonR                            Name  count      mean
 0.311121           I Love Lucy: Season 2   2954  4.090386
 0.299413  Rudolph the Red-Nosed Reindeer   6558  3.806496
 0.283321                   Mostly Martha  11508  3.871828
-'''
 
-
+```
