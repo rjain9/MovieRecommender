@@ -7,7 +7,10 @@ Following libraries are required to run:
 - operator
 
 To run the project, following command can be used:
+
+```
 python aldaProjectMain.py "Justice League"
+```
 
 Sample Output:
 
