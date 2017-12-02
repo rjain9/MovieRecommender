@@ -151,6 +151,7 @@ def test(movieUserMatrix, movieCount, custIdCount):
     if count != 0:
         print "rmse: ", math.sqrt(rmse/count)
 
+# Recommendation according to KNN
 def knn_recommend(df, movie_title, printFlag = True):
     movieIds = {}
     custIds = {}
@@ -232,12 +233,14 @@ def recommend(movie_title, min_count, printFlag = True):
 
 def checkRecommendationAccuracy(movieRecco, df, movie, algo = 'KNN'):
     count = 0
+    # get recommendation movies for each of the recommended movie for the input movie
     for index, row in movieRecco.iterrows():
         # print row['Name']
         if algo == 'KNN':
             recco = knn_recommend(df, row['Name'], False)
         else:
             recco = recommend(row['Name'], 0, False)
+        # check if the input movie exists in the recommended movies
         for i, inner_row in recco.iterrows():
             if inner_row['Name'] == movie:
                 # print inner_row['Name']
@@ -250,7 +253,9 @@ import sys
 movie = "Justice League"
 if len(sys.argv) > 1:
     movie = sys.argv[1]
+# get recommendations using knn method
 recco = knn_recommend(df, movie)
 checkRecommendationAccuracy(recco, df, movie, 'KNN')
+# get recommendations using Pearsons correlation method
 recco = recommend(movie, 0)
 checkRecommendationAccuracy(recco, df, movie, 'PC')
