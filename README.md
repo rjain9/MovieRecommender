@@ -1,4 +1,4 @@
-# ALDA-Fall-2017
+# Movie Recommender system using Netflix prize data
 
 Following libraries are required to run:
 - pandas
